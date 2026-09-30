@@ -2,7 +2,8 @@
 
 import { use, useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle, MessageSquare, Clock, DownloadCloud, Send, UserCircle2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, CheckCircle, MessageSquare, Clock, DownloadCloud, Send, UserCircle2, Pencil, Trash2, X, Save } from "lucide-react";
 import { useContent } from "@/context/ContentContext";
 import { useAuth } from "@/context/AuthContext";
 import { format } from "date-fns";
@@ -33,8 +34,9 @@ const COMMENTS_COLLECTION_ID = process.env.NEXT_PUBLIC_APPWRITE_COMMENTS_COLLECT
 export default function ReviewPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const id = resolvedParams.id;
+  const router = useRouter();
   
-  const { items, updateItemStatus, addNotification } = useContent();
+  const { items, updateItemStatus, updateItemDetails, updateItemDate, deleteItem, addNotification } = useContent();
   const { role, user } = useAuth();
   
   const content = items.find(i => i.id === id);
@@ -43,6 +45,52 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
   const [newComment, setNewComment] = useState("");
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+
+  // Edit State
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState("");
+  const [editCaption, setEditCaption] = useState("");
+  const [editVideoUrl, setEditVideoUrl] = useState("");
+  const [editDate, setEditDate] = useState("");
+
+  // Initialize edit state when entering edit mode
+  const handleEditClick = () => {
+    if (!content) return;
+    setEditTitle(content.title);
+    setEditCaption(content.caption || "");
+    setEditVideoUrl(content.videoUrl || "");
+    setEditDate(format(new Date(content.date), "yyyy-MM-dd"));
+    setIsEditing(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!content) return;
+    setIsUpdatingStatus(true);
+    
+    try {
+      await updateItemDetails(id, {
+        title: editTitle,
+        caption: editCaption,
+        videoUrl: editVideoUrl,
+      });
+      // Need to destructure updateItemDate from useContent at the top of the file!
+      if (editDate) {
+        await updateItemDate(id, new Date(editDate));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    
+    setIsEditing(false);
+    setIsUpdatingStatus(false);
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this post? This cannot be undone.")) return;
+    setIsUpdatingStatus(true);
+    await deleteItem(id);
+    router.push("/");
+  };
 
   useEffect(() => {
     async function fetchComments() {
@@ -148,15 +196,99 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
   return (
     <div className="max-w-6xl mx-auto space-y-8 px-4 sm:px-0 pb-12">
       {/* Top Navigation */}
-      <div>
+      <div className="flex justify-between items-center">
         <Link href="/" className="inline-flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors">
           <ArrowLeft className="w-4 h-4 mr-1.5" />
           Back to Dashboard
         </Link>
+        
+        {/* Admin Controls */}
+        {role === "admin" && !isEditing && (
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={handleEditClick}
+              className="inline-flex items-center text-sm font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-lg transition-colors"
+            >
+              <Pencil className="w-4 h-4 mr-1.5" />
+              Edit
+            </button>
+            <button 
+              onClick={handleDelete}
+              className="inline-flex items-center text-sm font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg transition-colors"
+            >
+              <Trash2 className="w-4 h-4 mr-1.5" />
+              Delete
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Header Section (Title & Meta at the top where they belong) */}
-      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6 border-b border-gray-200 pb-6">
+      {isEditing ? (
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8 space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-gray-900">Edit Post</h2>
+            <button onClick={() => setIsEditing(false)} className="text-gray-400 hover:text-gray-500">
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1">Title</label>
+              <input 
+                type="text" 
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                className="w-full rounded-xl border-gray-300 p-3 text-sm font-medium border"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1">Date</label>
+              <input 
+                type="date" 
+                value={editDate}
+                onChange={(e) => setEditDate(e.target.value)}
+                className="w-full rounded-xl border-gray-300 p-3 text-sm font-medium border"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1">Video URL (Google Drive)</label>
+              <input 
+                type="url" 
+                value={editVideoUrl}
+                onChange={(e) => setEditVideoUrl(e.target.value)}
+                className="w-full rounded-xl border-gray-300 p-3 text-sm font-medium border"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1">Caption</label>
+              <textarea 
+                rows={4}
+                value={editCaption}
+                onChange={(e) => setEditCaption(e.target.value)}
+                className="w-full rounded-xl border-gray-300 p-3 text-sm font-medium border resize-none"
+              />
+            </div>
+
+            <div className="flex justify-end pt-4">
+              <button
+                onClick={handleSaveEdit}
+                disabled={isUpdatingStatus}
+                className="inline-flex items-center px-5 py-2.5 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-50"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {isUpdatingStatus ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Header Section (Title & Meta at the top where they belong) */}
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6 border-b border-gray-200 pb-6">
         <div>
           <h1 className="text-3xl font-extrabold text-gray-900 mb-3">{content.title}</h1>
           <div className="flex flex-wrap items-center gap-3">
@@ -341,6 +473,8 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
 
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 }

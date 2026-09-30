@@ -35,6 +35,8 @@ type ContentContextType = {
   addItem: (item: Omit<ContentItem, "id">) => Promise<void>;
   updateItemDate: (id: string, newDate: Date) => Promise<void>;
   updateItemStatus: (id: string, newStatus: string) => Promise<void>;
+  updateItemDetails: (id: string, updates: Partial<Omit<ContentItem, "id" | "date" | "status">>) => Promise<void>;
+  deleteItem: (id: string) => Promise<void>;
   notifications: NotificationItem[];
   markAllNotificationsAsRead: (role: string) => void;
   addNotification: (notification: Omit<NotificationItem, "id" | "time" | "read">) => Promise<void>;
@@ -59,7 +61,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
           [Query.limit(100), Query.orderDesc("date")]
         );
         
-        const loadedItems: ContentItem[] = postsResponse.documents.map((doc: any) => ({
+        const loadedItems: ContentItem[] = postsResponse.documents.map((doc: Record<string, unknown>) => ({
           id: doc.$id as string,
           title: doc.title as string,
           type: doc.type as string,
@@ -79,14 +81,14 @@ export function ContentProvider({ children }: { children: ReactNode }) {
           [Query.limit(100), Query.orderDesc("$createdAt")]
         );
 
-        const loadedNotifs: NotificationItem[] = notifsResponse.documents.map((doc: any) => ({
-          id: doc.$id,
-          type: doc.type,
-          message: doc.message,
-          time: new Date(doc.$createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          read: doc.read,
-          roleContext: doc.roleContext,
-          link: doc.link,
+        const loadedNotifs: NotificationItem[] = notifsResponse.documents.map((doc: Record<string, unknown>) => ({
+          id: doc.$id as string,
+          type: doc.type as string,
+          message: doc.message as string,
+          time: new Date(doc.$createdAt as string).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          read: doc.read as boolean,
+          roleContext: doc.roleContext as string,
+          link: doc.link as string,
         }));
         setNotifications(loadedNotifs);
 
@@ -173,6 +175,37 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updateItemDetails = async (id: string, updates: Partial<Omit<ContentItem, "id" | "date" | "status">>) => {
+    setItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, ...updates } : item))
+    );
+
+    try {
+      await databases.updateDocument(
+        DATABASE_ID,
+        POSTS_COLLECTION_ID,
+        id,
+        updates
+      );
+    } catch (err) {
+      console.error("Failed to update item details in Appwrite:", err);
+    }
+  };
+
+  const deleteItem = async (id: string) => {
+    setItems((prev) => prev.filter((item) => item.id !== id));
+
+    try {
+      await databases.deleteDocument(
+        DATABASE_ID,
+        POSTS_COLLECTION_ID,
+        id
+      );
+    } catch (err) {
+      console.error("Failed to delete item from Appwrite:", err);
+    }
+  };
+
   const addNotification = async (notif: Omit<NotificationItem, "id" | "time" | "read">) => {
     try {
       const doc = await databases.createDocument(
@@ -234,6 +267,8 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         addItem,
         updateItemDate,
         updateItemStatus,
+        updateItemDetails,
+        deleteItem,
         notifications,
         markAllNotificationsAsRead,
         addNotification,
