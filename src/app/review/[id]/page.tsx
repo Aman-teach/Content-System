@@ -9,6 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { format } from "date-fns";
 import { databases } from "@/lib/appwrite";
 import { ID, Query } from "appwrite";
+import clsx from "clsx";
 
 // Helper function to extract Drive ID and format preview URL
 function getDriveEmbedUrl(url: string) {
