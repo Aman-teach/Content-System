@@ -122,7 +122,8 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
     );
   }
 
-  const isVertical = content.type === 'Reel' || content.type === 'TikTok' || content.type === 'Story';
+  const typeLower = (content.type || "").toLowerCase();
+  const isVertical = !typeLower.includes("carousel") && !typeLower.includes("article");
   const embedUrl = getDriveEmbedUrl(content.videoUrl || "");
   const isDriveLink = !!embedUrl;
 
@@ -344,7 +345,7 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
               
               {/* Media Player */}
               <div className="bg-white rounded-[2rem] p-4 sm:p-8 border border-stone-200/70 shadow-sm flex justify-center items-center w-full relative">
-                 <div className={`relative rounded-2xl overflow-hidden shadow-xl bg-black ${isVertical ? "w-full max-w-[360px] aspect-[9/16]" : "w-full aspect-video"}`}>
+                 <div className={`relative overflow-hidden shadow-2xl bg-black ${isVertical ? "w-full max-w-[340px] aspect-[9/16] rounded-[2.2rem] border-4 border-stone-900" : "w-full aspect-video rounded-2xl border border-stone-800"}`}>
                    {isDriveLink ? (
                      <iframe 
                        src={embedUrl} 
