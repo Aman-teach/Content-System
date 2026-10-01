@@ -353,9 +353,9 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
             <div className="flex items-center gap-2.5">
               <button 
                 onClick={() => {
-                  const shareUrl = `${window.location.origin}/share/${content.id}`;
+                  const shareUrl = `${window.location.origin}/review/${content.id}`;
                   navigator.clipboard.writeText(shareUrl);
-                  alert("Client Share Link copied to clipboard!");
+                  alert("Client Share Link copied to clipboard! (They will log in and see the full Client Workspace)");
                 }}
                 className="inline-flex items-center px-3.5 py-2 rounded-xl text-[11px] font-semibold text-white bg-gradient-to-r from-[#2C3E50] to-[#4CA1AF] hover:opacity-95 shadow-md shadow-[#2C3E50]/15 transition-all"
               >
