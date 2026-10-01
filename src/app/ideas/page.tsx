@@ -70,8 +70,11 @@ export default function IdeasPage() {
             }
           }
         }
-      } catch (err) {
-        console.error("Failed to load ideas from Appwrite:", err);
+      } catch (err: unknown) {
+        const appwriteErr = err as { code?: number };
+        if (appwriteErr.code !== 401) {
+          console.warn("Failed to load ideas from Appwrite:", err);
+        }
       } finally {
         setLoading(false);
       }

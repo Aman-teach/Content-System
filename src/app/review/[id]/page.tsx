@@ -104,8 +104,11 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
           ]
         );
         setComments(response.documents as unknown as Comment[]);
-      } catch (err) {
-        console.error("Failed to load comments:", err);
+      } catch (err: unknown) {
+        const appwriteErr = err as { code?: number };
+        if (appwriteErr.code !== 401) {
+          console.warn("Failed to load comments:", err);
+        }
       }
     }
     fetchComments();

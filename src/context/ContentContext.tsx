@@ -97,8 +97,11 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         }));
         setNotifications(loadedNotifs);
 
-      } catch (err) {
-        console.error("Failed to load data from Appwrite:", err);
+      } catch (err: unknown) {
+        const appwriteErr = err as { code?: number };
+        if (appwriteErr.code !== 401) {
+          console.warn("Failed to load data from Appwrite:", err);
+        }
       } finally {
         setLoading(false);
       }
