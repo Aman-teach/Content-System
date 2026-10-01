@@ -46,6 +46,7 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
   const [newComment, setNewComment] = useState("");
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Auto-scroll chat ref
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -92,8 +93,7 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
     setIsUpdatingStatus(false);
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this post? This cannot be undone.")) return;
+  const handleDeleteConfirm = async () => {
     setIsUpdatingStatus(true);
     await deleteItem(id);
     router.push("/");
@@ -220,7 +220,7 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
               Edit
             </button>
             <button 
-              onClick={handleDelete}
+              onClick={() => setShowDeleteModal(true)}
               className="inline-flex items-center text-xs font-semibold text-red-600 bg-red-50/70 hover:bg-red-100 border border-red-100 px-3.5 py-2 rounded-xl transition-colors"
             >
               <Trash2 className="w-3.5 h-3.5 mr-1.5" />
@@ -548,6 +548,37 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
             </div>
           </div>
         </>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/40 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border border-stone-200/50 transform transition-all animate-in fade-in zoom-in duration-200">
+            <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-5 mx-auto">
+              <Trash2 className="w-6 h-6 text-red-500" />
+            </div>
+            <h3 className="font-serif text-2xl text-stone-900 text-center mb-2">Delete Post?</h3>
+            <p className="text-sm font-normal text-stone-500 text-center mb-8">
+              Are you sure you want to delete this post? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                disabled={isUpdatingStatus}
+                className="flex-1 py-3 px-4 rounded-xl text-sm font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                disabled={isUpdatingStatus}
+                className="flex-1 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-red-600 hover:bg-red-700 transition-colors shadow-sm disabled:opacity-50 flex justify-center items-center"
+              >
+                {isUpdatingStatus ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
