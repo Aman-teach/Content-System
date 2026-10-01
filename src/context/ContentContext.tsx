@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { databases } from "@/lib/appwrite";
 import { ID, Query } from "appwrite";
+import { useAuth } from "@/context/AuthContext";
 
 export type ContentItem = {
   id: string;
@@ -46,14 +47,18 @@ type ContentContextType = {
 const ContentContext = createContext<ContentContextType | undefined>(undefined);
 
 export function ContentProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [items, setItems] = useState<ContentItem[]>([]);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Load items and notifications from Appwrite on mount
+  // Load items and notifications from Appwrite when user is logged in
   useEffect(() => {
+    if (!user) return;
+
     async function fetchData() {
       try {
+        setLoading(true);
         // Fetch posts
         const postsResponse = await databases.listDocuments(
           DATABASE_ID,
@@ -100,7 +105,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     }
 
     fetchData();
-  }, []);
+  }, [user]);
 
   const addItem = async (newItem: Omit<ContentItem, "id">) => {
     const tempId = Date.now().toString();

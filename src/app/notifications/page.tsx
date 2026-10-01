@@ -6,16 +6,6 @@ import { CheckCircle, MessageSquare, Clock, PlusCircle, Lightbulb, UserCircle2, 
 import Link from "next/link";
 import clsx from "clsx";
 
-type Notification = {
-  id: string;
-  type: "review" | "comment" | "status" | "idea";
-  message: string;
-  time: string;
-  read: boolean;
-  roleContext: "admin" | "client" | "both";
-  link: string;
-};
-
 // Removed mockNotifications array
 
 const getIcon = (type: string) => {

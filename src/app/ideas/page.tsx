@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { Lightbulb, MessageSquare, ThumbsUp, Send, UserCircle2, Sparkles, TrendingUp } from "lucide-react";
 import { useRole } from "@/context/RoleContext";
-import { useContent } from "@/context/ContentContext";
 import { databases } from "@/lib/appwrite";
 import { ID, Query } from "appwrite";
 import clsx from "clsx";
