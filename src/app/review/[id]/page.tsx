@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState, useEffect } from "react";
+import { use, useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, CheckCircle, MessageSquare, Clock, DownloadCloud, Send, UserCircle2, Pencil, Trash2, X, Save } from "lucide-react";
@@ -45,6 +45,13 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
   const [newComment, setNewComment] = useState("");
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+
+  // Auto-scroll chat ref
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [comments]);
 
   // Edit State
   const [isEditing, setIsEditing] = useState(false);
@@ -380,66 +387,134 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
               
               {/* Review Actions */}
               <div className="bg-white rounded-2xl border border-stone-200/70 p-6 shadow-sm sticky top-24">
-                <h3 className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-5">Your Decision</h3>
+                <h3 className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-5">
+                  {role === "client" ? "Your Decision" : "Workflow Actions"}
+                </h3>
                 <div className="space-y-3">
-                  {content.status !== 'Approved' ? (
-                    <button 
-                      onClick={handleApprove}
-                      disabled={isUpdatingStatus}
-                      className="w-full flex justify-center items-center px-4 py-3.5 rounded-xl shadow-sm text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50"
-                    >
-                      <CheckCircle className="w-5 h-5 mr-2" />
-                      {isUpdatingStatus ? "Updating..." : "Approve for Publishing"}
-                    </button>
+                  {role === "client" ? (
+                    <>
+                      {content.status !== 'Approved' ? (
+                        <button 
+                          onClick={handleApprove}
+                          disabled={isUpdatingStatus}
+                          className="w-full flex justify-center items-center px-4 py-3.5 rounded-xl shadow-sm text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                        >
+                          <CheckCircle className="w-5 h-5 mr-2" />
+                          {isUpdatingStatus ? "Updating..." : "Approve for Publishing"}
+                        </button>
+                      ) : (
+                        <div className="w-full flex justify-center items-center px-4 py-3.5 border border-emerald-200 rounded-xl shadow-sm text-sm font-semibold text-emerald-800 bg-emerald-50">
+                          <CheckCircle className="w-5 h-5 mr-2" />
+                          Approved for Publishing
+                        </div>
+                      )}
+                      
+                      <button 
+                        onClick={handleRequestChanges}
+                        disabled={isUpdatingStatus}
+                        className="w-full flex justify-center items-center px-4 py-3.5 border border-amber-200/80 rounded-xl text-sm font-semibold text-amber-900 bg-amber-50/70 hover:bg-amber-100/70 transition-colors disabled:opacity-50"
+                      >
+                        <MessageSquare className="w-5 h-5 mr-2 text-amber-600" />
+                        Request Changes
+                      </button>
+                    </>
                   ) : (
-                    <div className="w-full flex justify-center items-center px-4 py-3.5 border border-emerald-200 rounded-xl shadow-sm text-sm font-semibold text-emerald-800 bg-emerald-50">
-                      <CheckCircle className="w-5 h-5 mr-2" />
-                      Approved
-                    </div>
+                    <>
+                      {content.status === "Approved" ? (
+                        <div className="w-full flex justify-center items-center px-4 py-3.5 border border-emerald-200 rounded-xl shadow-sm text-sm font-semibold text-emerald-800 bg-emerald-50">
+                          <CheckCircle className="w-5 h-5 mr-2" />
+                          Approved by Client
+                        </div>
+                      ) : content.status === "Needs Changes" ? (
+                        <button 
+                          onClick={async () => {
+                            setIsUpdatingStatus(true);
+                            await updateItemStatus(id, "In Review");
+                            await addNotification({
+                              roleContext: "client",
+                              type: "status",
+                              message: `Admin updated '${content.title}' for review`,
+                              link: `/review/${id}`
+                            });
+                            setIsUpdatingStatus(false);
+                          }}
+                          disabled={isUpdatingStatus}
+                          className="w-full flex justify-center items-center px-4 py-3.5 rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-[#2C3E50] to-[#4CA1AF] hover:opacity-95 transition-all disabled:opacity-50"
+                        >
+                          <CheckCircle className="w-5 h-5 mr-2" />
+                          Resubmit for Client Review
+                        </button>
+                      ) : (
+                        <button 
+                          onClick={async () => {
+                            setIsUpdatingStatus(true);
+                            await updateItemStatus(id, "In Review");
+                            await addNotification({
+                              roleContext: "client",
+                              type: "review",
+                              message: `Admin submitted '${content.title}' for your review`,
+                              link: `/review/${id}`
+                            });
+                            setIsUpdatingStatus(false);
+                          }}
+                          disabled={isUpdatingStatus}
+                          className="w-full flex justify-center items-center px-4 py-3.5 rounded-xl shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-[#2C3E50] to-[#4CA1AF] hover:opacity-95 transition-all disabled:opacity-50"
+                        >
+                          <Send className="w-4 h-4 mr-2" />
+                          Send for Client Review
+                        </button>
+                      )}
+                    </>
                   )}
-                  
-                  <button 
-                    onClick={handleRequestChanges}
-                    disabled={isUpdatingStatus}
-                    className="w-full flex justify-center items-center px-4 py-3.5 border border-stone-200/80 rounded-xl text-sm font-semibold text-stone-700 bg-stone-50 hover:bg-stone-100 transition-colors disabled:opacity-50"
-                  >
-                    <MessageSquare className="w-5 h-5 mr-2 text-stone-500" />
-                    Request Changes
-                  </button>
                 </div>
               </div>
 
               {/* Activity / Feedback Thread */}
               <div className="bg-white rounded-2xl border border-stone-200/70 flex flex-col shadow-sm h-[500px]">
                 <div className="p-5 border-b border-stone-100 flex items-center justify-between bg-stone-50/50 rounded-t-2xl">
-                  <h3 className="text-xs font-semibold text-stone-400 uppercase tracking-wider">Feedback History</h3>
+                  <h3 className="text-xs font-semibold text-stone-400 uppercase tracking-wider">Feedback & Notes</h3>
                   <span className="bg-[#4CA1AF]/15 text-[#2C3E50] text-xs font-semibold px-2.5 py-0.5 rounded-full">{comments.length} Notes</span>
                 </div>
                 
                 {/* Chat Messages */}
-                <div className="flex-1 overflow-y-auto p-5 space-y-6 bg-white">
+                <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-stone-50/30">
                   {comments.length === 0 ? (
-                    <div className="text-center text-stone-400 text-xs font-normal mt-10">No feedback yet.</div>
+                    <div className="text-center text-stone-400 text-xs font-normal mt-10">No notes or comments yet.</div>
                   ) : (
-                    comments.map((comment) => (
-                      <div key={comment.$id} className="flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-full bg-stone-100 border border-stone-200/60 flex items-center justify-center flex-shrink-0 mt-1">
-                          <UserCircle2 className="w-5 h-5 text-[#2C3E50]" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-xs font-semibold text-stone-900">{comment.author}</span>
-                            <span className="text-[10px] text-stone-400 font-normal">
-                              {format(new Date(comment.$createdAt), "MMM d, h:mm a")}
+                    comments.map((comment) => {
+                      const isAdminComment = comment.author.toLowerCase().includes("admin");
+                      const isMe = (role === "admin" && isAdminComment) || (role === "client" && !isAdminComment);
+
+                      return (
+                        <div key={comment.$id} className={clsx("flex flex-col", isMe ? "items-end" : "items-start")}>
+                          <div className="flex items-center gap-1.5 mb-1 px-1">
+                            <span className="text-[11px] font-semibold text-stone-700">
+                              {isMe ? "You" : comment.author}
+                            </span>
+                            <span className={clsx(
+                              "text-[9px] px-1.5 py-0.2 rounded font-semibold uppercase tracking-wider",
+                              isAdminComment ? "bg-purple-100 text-purple-800" : "bg-emerald-100 text-emerald-800"
+                            )}>
+                              {isAdminComment ? "Admin" : "Client"}
+                            </span>
+                            <span className="text-[10px] text-stone-400 font-normal ml-1">
+                              {format(new Date(comment.$createdAt), "h:mm a")}
                             </span>
                           </div>
-                          <div className="bg-stone-100/70 rounded-2xl rounded-tl-sm p-3.5 text-sm text-stone-800 leading-relaxed border border-stone-200/50 font-normal">
+                          
+                          <div className={clsx(
+                            "max-w-[85%] p-3.5 text-xs leading-relaxed font-normal shadow-sm",
+                            isMe 
+                              ? "bg-gradient-to-r from-[#2C3E50] to-[#3B536B] text-white rounded-2xl rounded-tr-xs" 
+                              : "bg-white text-stone-800 border border-stone-200/80 rounded-2xl rounded-tl-xs"
+                          )}>
                             {comment.text}
                           </div>
                         </div>
-                      </div>
-                    ))
+                      );
+                    })
                   )}
+                  <div ref={chatEndRef} />
                 </div>
                 
                 {/* Chat Input */}
