@@ -74,12 +74,12 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="space-y-8 font-['Helvetica',sans-serif]">
+    <div className="space-y-4 font-['Helvetica',sans-serif]">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3">
         <div>
-          <h1 className="font-serif text-4xl lg:text-5xl font-normal text-stone-900 tracking-tight">Content Calendar</h1>
-          <p className="text-sm text-stone-500 mt-1 font-normal">
+          <h1 className="font-serif text-3xl lg:text-4xl font-normal text-stone-900 tracking-tight">Content Calendar</h1>
+          <p className="text-xs text-stone-500 mt-0.5 font-normal">
             {role === "admin" ? "Drag and drop to reschedule posts for Vidhi's review." : "See when content is scheduled to go live."}
           </p>
         </div>
@@ -135,8 +135,8 @@ export default function CalendarPage() {
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, day)}
                 className={clsx(
-                  "min-h-[140px] p-2 transition-colors duration-200 relative group",
-                  isCurrentMonth ? "bg-white hover:bg-slate-50" : "bg-gray-50"
+                  "min-h-[85px] p-1.5 transition-colors duration-200 relative group",
+                  isCurrentMonth ? "bg-white hover:bg-stone-50/50" : "bg-stone-50/60"
                 )}
               >
                 <div className="flex justify-between items-start mb-2 px-1">
@@ -179,7 +179,7 @@ export default function CalendarPage() {
                         </div>
                         
                         {post.thumbnail && (
-                          <div className="w-full h-20 mb-1.5 rounded bg-gray-100 overflow-hidden relative group-hover:opacity-90 transition-opacity">
+                          <div className="w-full h-10 mb-1 rounded bg-stone-100 overflow-hidden relative group-hover:opacity-90 transition-opacity">
                             {/* eslint-disable-next-line @next/next/no-img-element */}<img src={post.thumbnail} alt="" className="object-cover w-full h-full" />
                             {post.type === "video" && (
                               <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
