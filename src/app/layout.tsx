@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Instrument_Serif } from "next/font/google";
 import { AuthProvider } from "@/context/AuthContext";
 import { RoleProvider } from "@/context/RoleContext";
 import { ContentProvider } from "@/context/ContentContext";
 import { Navigation } from "@/components/Navigation";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const jbMono = JetBrains_Mono({
-  variable: "--font-mono",
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument",
+  weight: "400",
   subsets: ["latin"],
   display: "swap",
 });
@@ -31,9 +26,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jbMono.variable} h-full antialiased`}
+      className={`${instrumentSerif.variable} h-full antialiased`}
     >
-      <body className="flex h-screen bg-gray-50 text-gray-900 font-sans overflow-hidden">
+      <body className="flex h-screen bg-[#F9F7F2] text-gray-900 font-sans overflow-hidden">
         <AuthProvider>
           <RoleProvider>
             <ContentProvider>

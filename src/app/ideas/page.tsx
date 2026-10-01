@@ -142,15 +142,15 @@ export default function IdeasPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 px-4 sm:px-0">
+    <div className="max-w-4xl mx-auto space-y-8 font-['Helvetica',sans-serif]">
       
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center">
-          <Sparkles className="w-6 h-6 mr-2 text-amber-500" />
+        <h1 className="font-serif text-4xl lg:text-5xl font-normal text-stone-900 tracking-tight flex items-center">
+          <Sparkles className="w-8 h-8 mr-3 text-amber-500" />
           Content Brainstorm
         </h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-stone-500 mt-1 font-normal">
           Drop inspiration, requests, and concepts for future content. Upvote the best ones!
         </p>
       </div>
