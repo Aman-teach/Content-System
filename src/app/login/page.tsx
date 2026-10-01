@@ -55,9 +55,9 @@ export default function LoginPage() {
           </div>
           
           <div className="relative z-10 p-10 mt-20">
-            <p className="text-white font-medium text-sm mb-2 drop-shadow-md tracking-wide">You can easily</p>
+            <p className="text-white font-medium text-sm mb-2 drop-shadow-md tracking-wide">Effortlessly review & collaborate</p>
             <h2 className={clsx(instrumentSerif.className, "text-4xl lg:text-5xl text-white leading-[1.1] tracking-wide drop-shadow-lg")}>
-              Get access to your personal hub for clarity and productivity
+              Streamline your content pipeline, approvals, and creative ideas
             </h2>
           </div>
         </div>
