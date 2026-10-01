@@ -96,7 +96,7 @@ export default function CalendarPage() {
             <button onClick={prevMonth} className="p-1.5 rounded-md hover:bg-gray-100 text-gray-500 transition-colors focus:outline-none">
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <span className="text-sm font-bold text-gray-700 w-32 text-center">
+            <span className="text-xs font-semibold text-stone-700 w-32 text-center">
               {format(currentDate, "MMMM yyyy")}
             </span>
             <button onClick={nextMonth} className="p-1.5 rounded-md hover:bg-gray-100 text-gray-500 transition-colors focus:outline-none">
@@ -107,18 +107,18 @@ export default function CalendarPage() {
       </div>
 
       {/* Calendar Grid */}
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-stone-200/70 rounded-2xl shadow-sm overflow-hidden font-['Helvetica',sans-serif]">
         {/* Days Header */}
-        <div className="grid grid-cols-7 border-b border-gray-200 bg-gray-50/50">
+        <div className="grid grid-cols-7 border-b border-stone-200/60 bg-stone-50/50">
           {weekDays.map((day) => (
-            <div key={day} className="py-3 text-center text-xs font-bold text-gray-400 uppercase tracking-widest">
+            <div key={day} className="py-3 text-center text-xs font-semibold text-stone-400 uppercase tracking-widest">
               {day}
             </div>
           ))}
         </div>
         
         {/* Days Grid */}
-        <div className="grid grid-cols-7 bg-gray-200 gap-px">
+        <div className="grid grid-cols-7 bg-stone-200/60 gap-px">
           {days.map((day) => {
              const isCurrentMonth = isSameMonth(day, monthStart);
              const isMockToday = day.getTime() === mockToday.getTime();
@@ -141,12 +141,12 @@ export default function CalendarPage() {
               >
                 <div className="flex justify-between items-start mb-2 px-1">
                   <div className={clsx(
-                    "font-bold text-xs w-7 h-7 flex items-center justify-center rounded-full transition-colors",
+                    "font-semibold text-xs w-7 h-7 flex items-center justify-center rounded-full transition-colors",
                     isMockToday 
-                      ? "bg-indigo-600 text-white shadow-md" 
+                      ? "bg-[#2C3E50] text-white shadow-sm" 
                       : !isCurrentMonth 
-                        ? "text-gray-400" 
-                        : "text-gray-700 group-hover:text-indigo-600"
+                        ? "text-stone-300" 
+                        : "text-stone-700 group-hover:text-[#2C3E50]"
                   )}>
                     {format(day, "d")}
                   </div>
@@ -189,7 +189,7 @@ export default function CalendarPage() {
                           </div>
                         )}
 
-                        <p className="text-xs font-bold text-gray-800 leading-tight line-clamp-2">
+                        <p className="text-xs font-semibold text-stone-900 leading-snug line-clamp-2">
                           {post.title}
                         </p>
                       </div>

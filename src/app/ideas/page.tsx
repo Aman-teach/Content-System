@@ -159,11 +159,11 @@ export default function IdeasPage() {
       </div>
 
       {/* Modern Sleek Input Area */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden transition-all duration-300 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500">
+      <div className="bg-white rounded-2xl border border-stone-200/70 shadow-sm overflow-hidden transition-all duration-300 focus-within:ring-2 focus-within:ring-[#4CA1AF] focus-within:border-[#4CA1AF]">
         <form onSubmit={handleSubmit}>
           <div className="p-4 sm:p-5 flex gap-4">
             <div className="flex-shrink-0 mt-1">
-              <UserCircle2 className="w-10 h-10 text-gray-300" />
+              <UserCircle2 className="w-10 h-10 text-stone-300" />
             </div>
             
             <div className="flex-1 space-y-3">
@@ -173,7 +173,7 @@ export default function IdeasPage() {
                 onChange={(e) => setNewTitle(e.target.value)}
                 onFocus={() => setIsExpanded(true)}
                 placeholder="Got a content idea? Give it a catchy title..."
-                className="w-full text-lg font-bold text-gray-900 placeholder-gray-400 border-none outline-none focus:ring-0 p-0 bg-transparent"
+                className="w-full text-base font-semibold text-stone-900 placeholder-stone-400 border-none outline-none focus:ring-0 p-0 bg-transparent"
                 required
               />
               
@@ -184,11 +184,11 @@ export default function IdeasPage() {
                     onChange={(e) => setNewDesc(e.target.value)}
                     placeholder="Add some details, or drop a link to a TikTok/Reel that inspired you..."
                     rows={2}
-                    className="w-full text-sm text-gray-600 placeholder-gray-400 border-none outline-none focus:ring-0 p-0 bg-transparent resize-none"
+                    className="w-full text-sm font-normal text-stone-600 placeholder-stone-400 border-none outline-none focus:ring-0 p-0 bg-transparent resize-none"
                   />
                   
-                  <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
-                    <span className="text-xs font-semibold text-gray-400 flex items-center">
+                  <div className="flex justify-between items-center mt-4 pt-4 border-t border-stone-100">
+                    <span className="text-xs font-semibold text-stone-400 flex items-center">
                       <TrendingUp className="w-3.5 h-3.5 mr-1" />
                       Ideas with details perform 3x better
                     </span>
@@ -200,16 +200,16 @@ export default function IdeasPage() {
                           setNewTitle("");
                           setNewDesc("");
                         }} 
-                        className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
+                        className="px-4 py-2 text-xs font-semibold text-stone-500 hover:text-stone-700 hover:bg-stone-100 rounded-full transition-colors"
                       >
                         Cancel
                       </button>
                       <button 
                         type="submit" 
                         disabled={!newTitle.trim()}
-                        className="inline-flex items-center px-5 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-full shadow-sm transition-colors"
+                        className="inline-flex items-center px-5 py-2 text-xs font-semibold text-white bg-gradient-to-r from-[#2C3E50] to-[#4CA1AF] hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed rounded-full shadow-sm transition-all"
                       >
-                        <Send className="w-4 h-4 mr-2" />
+                        <Send className="w-3.5 h-3.5 mr-2" />
                         Post Idea
                       </button>
                     </div>
@@ -224,38 +224,38 @@ export default function IdeasPage() {
       {/* Ideas Feed */}
       <div className="space-y-4">
         {ideas.map((idea) => (
-          <div key={idea.id} className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex gap-4 sm:gap-5 hover:border-indigo-200 transition-colors group">
+          <div key={idea.id} className="bg-white p-5 rounded-2xl border border-stone-200/70 shadow-sm flex gap-4 sm:gap-5 hover:border-[#4CA1AF] transition-colors group">
             
             {/* Upvote Column */}
             <div className="flex flex-col items-center">
               <button 
                 onClick={() => toggleVote(idea.id)}
-                className="flex flex-col items-center justify-center w-12 h-14 rounded-xl bg-gray-50 border border-gray-100 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-all flex-shrink-0"
+                className="flex flex-col items-center justify-center w-12 h-14 rounded-xl bg-stone-50 border border-stone-200/60 hover:bg-stone-100 hover:text-[#2C3E50] transition-all flex-shrink-0"
               >
-                <ThumbsUp className="w-4 h-4 text-gray-400 group-hover:text-indigo-500 mb-1" />
-                <span className="text-sm font-black text-gray-700 group-hover:text-indigo-600">{idea.votes}</span>
+                <ThumbsUp className="w-4 h-4 text-stone-400 group-hover:text-[#2C3E50] mb-1" />
+                <span className="text-xs font-semibold text-stone-700 group-hover:text-[#2C3E50]">{idea.votes}</span>
               </button>
             </div>
             
             {/* Content Column */}
             <div className="flex-1 min-w-0 py-1">
               <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                <h3 className="text-base font-bold text-gray-900 truncate">{idea.title}</h3>
+                <h3 className="text-base font-semibold text-stone-900 truncate">{idea.title}</h3>
                 <span className={clsx(
-                  "text-[10px] px-2 py-0.5 rounded-md font-bold tracking-wide uppercase",
-                  idea.author === "client" ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-purple-50 text-purple-700 border border-purple-100"
+                  "text-[10px] px-2 py-0.5 rounded-md font-semibold tracking-wide uppercase",
+                  idea.author === "client" ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60" : "bg-purple-50 text-purple-700 border border-purple-200/60"
                 )}>
                   {idea.author === "client" ? "Vidhi" : "Admin"}
                 </span>
               </div>
-              <p className="text-sm text-gray-600 leading-relaxed pr-4">
+              <p className="text-sm font-normal text-stone-600 leading-relaxed pr-4">
                 {idea.description}
               </p>
             </div>
             
             {/* Actions Column */}
             <div className="flex items-start flex-shrink-0 pt-1">
-               <button className="flex items-center text-sm font-bold text-gray-400 hover:text-indigo-600 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+               <button className="flex items-center text-xs font-semibold text-stone-400 hover:text-[#2C3E50] px-3 py-2 rounded-lg hover:bg-stone-50 transition-colors">
                  <MessageSquare className="w-4 h-4 mr-1.5" />
                  Discuss
                </button>
@@ -264,12 +264,12 @@ export default function IdeasPage() {
         ))}
 
         {!loading && ideas.length === 0 && (
-          <div className="text-center py-16 bg-white rounded-2xl border border-gray-200 border-dashed">
+          <div className="text-center py-16 bg-white rounded-2xl border border-stone-200/70 border-dashed">
              <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
                <Lightbulb className="w-8 h-8 text-amber-500" />
              </div>
-             <h3 className="text-lg font-bold text-gray-900">No ideas yet</h3>
-             <p className="mt-1 text-sm text-gray-500">Be the first to share a great concept!</p>
+             <h3 className="text-base font-semibold text-stone-900">No ideas yet</h3>
+             <p className="mt-1 text-xs text-stone-500 font-normal">Be the first to share a great concept!</p>
           </div>
         )}
       </div>
