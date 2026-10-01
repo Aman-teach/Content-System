@@ -137,7 +137,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         prev.map((i) => (i.id === tempId ? { ...i, id: doc.$id } : i))
       );
     } catch (err) {
-      console.error("Failed to save post to Appwrite:", err);
+      console.warn("Failed to save post to Appwrite:", err);
     }
   };
 
@@ -162,7 +162,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         { date: updatedDate.toISOString() }
       );
     } catch (err) {
-      console.error("Failed to update date in Appwrite:", err);
+      console.warn("Failed to update date in Appwrite:", err);
     }
   };
 
@@ -179,7 +179,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         { status: newStatus }
       );
     } catch (err) {
-      console.error("Failed to update status in Appwrite:", err);
+      console.warn("Failed to update status in Appwrite:", err);
     }
   };
 
@@ -196,7 +196,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         updates
       );
     } catch (err) {
-      console.error("Failed to update item details in Appwrite:", err);
+      console.warn("Failed to update item details in Appwrite:", err);
     }
   };
 
@@ -210,7 +210,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         id
       );
     } catch (err) {
-      console.error("Failed to delete item from Appwrite:", err);
+      console.warn("Failed to delete item from Appwrite:", err);
     }
   };
 
@@ -241,7 +241,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       
       setNotifications(prev => [newNotif, ...prev]);
     } catch (err) {
-      console.error("Failed to create notification:", err);
+      console.warn("Failed to create notification:", err);
     }
   };
 
@@ -264,7 +264,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
         });
       }
     } catch (err) {
-      console.error("Failed to mark notifications as read in Appwrite", err);
+      console.warn("Failed to mark notifications as read in Appwrite", err);
     }
   };
 

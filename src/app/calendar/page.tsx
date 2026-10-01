@@ -92,26 +92,26 @@ export default function CalendarPage() {
             Today
           </button>
           
-          <div className="flex items-center space-x-2 bg-white rounded-lg shadow-sm border border-gray-200 p-1">
-            <button onClick={prevMonth} className="p-1.5 rounded-md hover:bg-gray-100 text-gray-500 transition-colors focus:outline-none">
-              <ChevronLeft className="w-5 h-5" />
+          <div className="flex items-center space-x-2 bg-white rounded-xl shadow-sm border border-stone-200/70 p-1">
+            <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-stone-50 text-stone-500 transition-colors focus:outline-none">
+              <ChevronLeft className="w-4 h-4" />
             </button>
             <span className="text-xs font-semibold text-stone-700 w-32 text-center">
               {format(currentDate, "MMMM yyyy")}
             </span>
-            <button onClick={nextMonth} className="p-1.5 rounded-md hover:bg-gray-100 text-gray-500 transition-colors focus:outline-none">
-              <ChevronRight className="w-5 h-5" />
+            <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-stone-50 text-stone-500 transition-colors focus:outline-none">
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>
       </div>
 
       {/* Calendar Grid */}
-      <div className="bg-white border border-stone-200/70 rounded-2xl shadow-sm overflow-hidden font-['Helvetica',sans-serif]">
+      <div className="bg-white border border-stone-200/70 rounded-3xl shadow-sm overflow-hidden font-['Helvetica',sans-serif]">
         {/* Days Header */}
         <div className="grid grid-cols-7 border-b border-stone-200/60 bg-stone-50/50">
           {weekDays.map((day) => (
-            <div key={day} className="py-3 text-center text-xs font-semibold text-stone-400 uppercase tracking-widest">
+            <div key={day} className="py-3.5 text-center text-[10px] font-bold text-stone-400 uppercase tracking-widest">
               {day}
             </div>
           ))}
@@ -135,13 +135,13 @@ export default function CalendarPage() {
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, day)}
                 className={clsx(
-                  "min-h-[85px] p-1.5 transition-colors duration-200 relative group",
+                  "min-h-[90px] p-2 transition-colors duration-200 relative group",
                   isCurrentMonth ? "bg-white hover:bg-stone-50/50" : "bg-stone-50/60"
                 )}
               >
                 <div className="flex justify-between items-start mb-2 px-1">
                   <div className={clsx(
-                    "font-semibold text-xs w-7 h-7 flex items-center justify-center rounded-full transition-colors",
+                    "font-semibold text-[11px] w-6 h-6 flex items-center justify-center rounded-full transition-colors",
                     isMockToday 
                       ? "bg-[#2C3E50] text-white shadow-sm" 
                       : !isCurrentMonth 
@@ -163,33 +163,33 @@ export default function CalendarPage() {
                       className="block focus:outline-none"
                     >
                       <div className={clsx(
-                        "flex flex-col gap-1.5 p-2 bg-white rounded-lg border border-gray-200 shadow-sm hover:border-indigo-300 transition-all cursor-grab active:cursor-grabbing",
-                        draggedItemId === post.id ? "opacity-50 border-dashed scale-95" : "hover:shadow-sm hover:-translate-y-0.5"
+                        "flex flex-col gap-1 p-2 bg-white rounded-xl border border-stone-200/70 shadow-sm hover:border-[#4CA1AF]/60 transition-all cursor-grab active:cursor-grabbing group/card",
+                        draggedItemId === post.id ? "opacity-50 border-dashed scale-95" : "hover:shadow-md hover:-translate-y-0.5"
                       )}>
-                        <div className="flex items-center justify-between mb-1.5">
-                          <div className="flex items-center gap-1.5">
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="flex items-center gap-1.5 opacity-80 group-hover/card:opacity-100 transition-opacity">
                             {(post.platforms || []).map(getPlatformIcon)}
                           </div>
                           <div className="flex items-center gap-1.5">
-                            <span className="text-[10px] font-bold text-gray-400 tracking-tight">
+                            <span className="text-[9px] font-bold text-stone-400 tracking-wider uppercase">
                               {format(post.date, "h:mm a")}
                             </span>
-                            <span className={`w-2 h-2 rounded-full ${getStatusColor(post.status)} flex-shrink-0`} title={post.status} />
+                            <span className={`w-2 h-2 rounded-full ${getStatusColor(post.status)} shadow-sm flex-shrink-0 ring-2 ring-white`} title={post.status} />
                           </div>
                         </div>
                         
                         {post.thumbnail && (
-                          <div className="w-full h-10 mb-1 rounded bg-stone-100 overflow-hidden relative group-hover:opacity-90 transition-opacity">
+                          <div className="w-full h-12 mb-1.5 rounded-lg bg-stone-100 overflow-hidden relative group-hover/card:opacity-90 transition-opacity border border-stone-100">
                             {/* eslint-disable-next-line @next/next/no-img-element */}<img src={post.thumbnail} alt="" className="object-cover w-full h-full" />
                             {post.type === "video" && (
                               <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                                <Video className="w-5 h-5 text-white drop-shadow-md" />
+                                <Video className="w-4 h-4 text-white drop-shadow-md" />
                               </div>
                             )}
                           </div>
                         )}
 
-                        <p className="text-xs font-semibold text-stone-900 leading-snug line-clamp-2">
+                        <p className="text-[11px] font-semibold text-stone-800 leading-tight line-clamp-2">
                           {post.title}
                         </p>
                       </div>

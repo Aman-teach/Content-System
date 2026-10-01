@@ -8,7 +8,7 @@ import { useContent } from "@/context/ContentContext";
 import { useAuth } from "@/context/AuthContext";
 import { format } from "date-fns";
 import { databases } from "@/lib/appwrite";
-import { ID, Query } from "appwrite";
+import { ID, Query, Permission, Role } from "appwrite";
 import clsx from "clsx";
 
 // Helper function to extract Drive ID and format preview URL
@@ -86,7 +86,7 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
         await updateItemDate(id, new Date(editDate));
       }
     } catch (err) {
-      console.error(err);
+      console.warn(err);
     }
     
     setIsEditing(false);
@@ -167,7 +167,8 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
     if (!newComment.trim()) return;
     setIsSubmittingComment(true);
 
-    const authorName = user?.name || (role === "admin" ? "Admin" : "Vidhi");
+    const baseName = user?.name || (role === "admin" ? "Admin" : "Vidhi");
+    const authorName = `${baseName} [${role.toUpperCase()}]`;
 
     try {
       const doc = await databases.createDocument(
@@ -178,7 +179,12 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
           postId: id,
           author: authorName,
           text: newComment,
-        }
+        },
+        [
+          Permission.read(Role.any()),
+          Permission.update(Role.any()),
+          Permission.delete(Role.any())
+        ]
       );
 
       setComments(prev => [...prev, doc as unknown as Comment]);
@@ -193,7 +199,7 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
       
       setNewComment("");
     } catch (err) {
-      console.error("Failed to add comment:", err);
+      console.warn("Failed to add comment:", err);
       alert("Failed to send comment. Please try again.");
     } finally {
       setIsSubmittingComment(false);
@@ -214,16 +220,16 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
           <div className="flex items-center gap-2">
             <button 
               onClick={handleEditClick}
-              className="inline-flex items-center text-xs font-semibold text-stone-700 bg-white border border-stone-200/80 hover:bg-stone-50 px-3.5 py-2 rounded-xl transition-colors shadow-sm"
+              className="inline-flex items-center text-[11px] font-semibold text-stone-700 bg-white border border-stone-200/80 hover:bg-stone-50 px-3 py-1.5 rounded-xl transition-colors shadow-sm"
             >
-              <Pencil className="w-3.5 h-3.5 mr-1.5 text-stone-500" />
+              <Pencil className="w-3 h-3 mr-1.5 text-stone-500" />
               Edit
             </button>
             <button 
               onClick={() => setShowDeleteModal(true)}
-              className="inline-flex items-center text-xs font-semibold text-red-600 bg-red-50/70 hover:bg-red-100 border border-red-100 px-3.5 py-2 rounded-xl transition-colors"
+              className="inline-flex items-center text-[11px] font-semibold text-red-600 bg-red-50/70 hover:bg-red-100 border border-red-100 px-3 py-1.5 rounded-xl transition-colors"
             >
-              <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+              <Trash2 className="w-3 h-3 mr-1.5" />
               Delete
             </button>
           </div>
@@ -295,22 +301,48 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
       ) : (
         <>
           {/* Header Section */}
-          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6 border-b border-stone-200/70 pb-6">
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-5 border-b border-stone-200/70 pb-5">
             <div>
-              <h1 className="font-serif text-4xl lg:text-5xl font-normal text-stone-900 mb-3">{content.title}</h1>
-              <div className="flex flex-wrap items-center gap-2.5">
-                  <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold bg-stone-100 text-stone-700 border border-stone-200/60">
+              <h1 className="font-serif text-3xl lg:text-4xl font-normal text-stone-900 mb-2.5">{content.title}</h1>
+              <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-semibold bg-stone-100 text-stone-700 border border-stone-200/60">
                     {content.type}
                   </span>
-                  <span className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold border ${content.status === 'Approved' ? 'bg-emerald-50 text-emerald-800 border-emerald-200/80' : 'bg-amber-50 text-amber-800 border-amber-200/80'}`}>
-                    <Clock className="w-3.5 h-3.5 mr-1.5" />
-                    {content.status}
-                  </span>
-                  <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold bg-stone-100 text-stone-700 border border-stone-200/60">
+                  
+                  {role === "admin" ? (
+                    <div className={`relative inline-flex items-center rounded-md border ${content.status === 'Approved' ? 'bg-emerald-50 border-emerald-200/80' : 'bg-amber-50 border-amber-200/80'}`}>
+                      <Clock className={`w-3 h-3 ml-2.5 ${content.status === 'Approved' ? 'text-emerald-800' : 'text-amber-800'}`} />
+                      <select 
+                        value={content.status}
+                        onChange={async (e) => {
+                          setIsUpdatingStatus(true);
+                          await updateItemStatus(id, e.target.value as "Draft" | "In Review" | "Approved" | "Needs Changes");
+                          setIsUpdatingStatus(false);
+                        }}
+                        disabled={isUpdatingStatus}
+                        className={`appearance-none bg-transparent py-1 pl-1.5 pr-7 text-[11px] font-semibold outline-none cursor-pointer ${content.status === 'Approved' ? 'text-emerald-800' : 'text-amber-800'}`}
+                      >
+                        <option value="Draft">Draft</option>
+                        <option value="In Review">In Review</option>
+                        <option value="Needs Changes">Needs Changes</option>
+                        <option value="Approved">Approved</option>
+                      </select>
+                      <div className={`pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 ${content.status === 'Approved' ? 'text-emerald-800' : 'text-amber-800'}`}>
+                        <svg className="h-2.5 w-2.5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                      </div>
+                    </div>
+                  ) : (
+                    <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-semibold border ${content.status === 'Approved' ? 'bg-emerald-50 text-emerald-800 border-emerald-200/80' : 'bg-amber-50 text-amber-800 border-amber-200/80'}`}>
+                      <Clock className="w-3 h-3 mr-1.5" />
+                      {content.status}
+                    </span>
+                  )}
+
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-semibold bg-stone-100 text-stone-700 border border-stone-200/60">
                     {format(content.date, "MMM d, yyyy")}
                   </span>
                   {content.platforms.map(p => (
-                    <span key={p} className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold text-stone-600 bg-stone-100/70 border border-stone-200/50">
+                    <span key={p} className="inline-flex items-center px-2 py-1 rounded-md text-[11px] font-semibold text-stone-600 bg-stone-100/70 border border-stone-200/50">
                       {p}
                     </span>
                   ))}
@@ -318,16 +350,16 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
               <button 
                 onClick={() => {
                   const shareUrl = `${window.location.origin}/share/${content.id}`;
                   navigator.clipboard.writeText(shareUrl);
                   alert("Client Share Link copied to clipboard!");
                 }}
-                className="inline-flex items-center px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-[#2C3E50] to-[#4CA1AF] hover:opacity-95 shadow-md shadow-[#2C3E50]/15 transition-all"
+                className="inline-flex items-center px-3.5 py-2 rounded-xl text-[11px] font-semibold text-white bg-gradient-to-r from-[#2C3E50] to-[#4CA1AF] hover:opacity-95 shadow-md shadow-[#2C3E50]/15 transition-all"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
                 Share with Client
               </button>
 
@@ -336,9 +368,9 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
                   href={content.videoUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="inline-flex items-center px-4 py-2.5 rounded-xl text-xs font-semibold bg-white text-stone-700 border border-stone-200/80 hover:bg-stone-50 shadow-sm transition-all"
+                  className="inline-flex items-center px-3.5 py-2 rounded-xl text-[11px] font-semibold bg-white text-stone-700 border border-stone-200/80 hover:bg-stone-50 shadow-sm transition-all"
                 >
-                  <DownloadCloud className="w-4 h-4 mr-2 text-stone-500" />
+                  <DownloadCloud className="w-3.5 h-3.5 mr-1.5 text-stone-500" />
                   Download
                 </a>
               )}
@@ -387,7 +419,7 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
             <div className="lg:col-span-5 space-y-6">
               
               {/* Review Actions */}
-              <div className="bg-white rounded-2xl border border-stone-200/70 p-6 shadow-sm sticky top-24">
+              <div className="bg-white rounded-2xl border border-stone-200/70 p-6 shadow-sm">
                 <h3 className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-5">
                   {role === "client" ? "Your Decision" : "Workflow Actions"}
                 </h3>
@@ -483,14 +515,19 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
                     <div className="text-center text-stone-400 text-xs font-normal mt-10">No notes or comments yet.</div>
                   ) : (
                     comments.map((comment) => {
-                      const isAdminComment = comment.author.toLowerCase().includes("admin");
+                      const rawAuthor = comment.author || "";
+                      const hasAdminTag = rawAuthor.includes("[ADMIN]");
+                      const hasClientTag = rawAuthor.includes("[CLIENT]");
+                      const isAdminComment = hasAdminTag || (!hasClientTag && rawAuthor.toLowerCase().includes("admin"));
+                      
+                      const displayAuthor = rawAuthor.replace(/ \[(ADMIN|CLIENT)\]/i, '').trim();
                       const isMe = (role === "admin" && isAdminComment) || (role === "client" && !isAdminComment);
 
                       return (
                         <div key={comment.$id} className={clsx("flex flex-col", isMe ? "items-end" : "items-start")}>
                           <div className="flex items-center gap-1.5 mb-1 px-1">
                             <span className="text-[11px] font-semibold text-stone-700">
-                              {isMe ? "You" : comment.author}
+                              {isMe ? "You" : displayAuthor}
                             </span>
                             <span className={clsx(
                               "text-[9px] px-1.5 py-0.2 rounded font-semibold uppercase tracking-wider",

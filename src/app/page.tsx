@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { PlusCircle, Clock, CheckCircle, MessageSquare, Filter, Video, XCircle } from "lucide-react";
+import { PlusCircle, Clock, CheckCircle, MessageSquare, Filter, XCircle } from "lucide-react";
+import { FaInstagram, FaYoutube, FaLinkedin, FaTiktok } from "react-icons/fa";
 import clsx from "clsx";
 import { format } from "date-fns";
 import { useRole } from "@/context/RoleContext";
@@ -27,10 +28,11 @@ const getStatusIcon = (status: string) => {
 
 const getPlatformIcon = (platform: string) => {
   switch (platform) {
-    case "Instagram": return <Video className="w-3.5 h-3.5 mr-1 text-pink-600" />;
-    case "Youtube": return <Video className="w-3.5 h-3.5 mr-1 text-red-600" />;
-    case "TikTok": return <span className="mr-1 text-[10px] font-bold">TikTok</span>;
-    default: return <Video className="w-3.5 h-3.5 mr-1 text-stone-500" />;
+    case "Instagram": return <FaInstagram className="w-3.5 h-3.5 mr-1.5 text-pink-600" />;
+    case "Youtube": return <FaYoutube className="w-3.5 h-3.5 mr-1.5 text-red-600" />;
+    case "TikTok": return <FaTiktok className="w-3.5 h-3.5 mr-1.5 text-stone-800" />;
+    case "Linkedin": return <FaLinkedin className="w-3.5 h-3.5 mr-1.5 text-blue-600" />;
+    default: return <span className="w-1.5 h-1.5 rounded-full bg-stone-300 mr-1.5" />;
   }
 };
 
@@ -172,7 +174,7 @@ export default function Dashboard() {
                 </div>
               </div>
               
-              <h3 className="font-serif text-2xl font-normal text-stone-900 leading-snug mb-1 group-hover:text-[#2C3E50] transition-colors line-clamp-2">{item.title}</h3>
+              <h3 className="font-serif text-2xl font-bold text-stone-900 leading-snug mb-1 group-hover:text-[#2C3E50] transition-colors line-clamp-2">{item.title}</h3>
               <p className="text-xs font-semibold text-[#4CA1AF] mb-4">
                 {format(item.date, "MMM d, yyyy 'at' h:mm a")}
               </p>

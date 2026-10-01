@@ -18,14 +18,9 @@ type Idea = {
 const DATABASE_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID || "6abd15200019b4edff61";
 const IDEAS_COLLECTION_ID = process.env.NEXT_PUBLIC_APPWRITE_IDEAS_COLLECTION_ID || "6abd17ad002b014cbcc8";
 
-const initialIdeas: Idea[] = [
-  { id: "1", title: "Day in the Life Vlog", description: "Let's do a quick BTS of how a standard Tuesday goes. People love authenticity.", author: "client", votes: 3 },
-  { id: "2", title: "Common Mistakes Carousel", description: "3 biggest mistakes people make when trying to XYZ. High save value.", author: "admin", votes: 5 },
-];
-
 export default function IdeasPage() {
   const { role } = useRole();
-  const [ideas, setIdeas] = useState<Idea[]>(initialIdeas);
+  const [ideas, setIdeas] = useState<Idea[]>([]);
   const [newTitle, setNewTitle] = useState("");
   const [newDesc, setNewDesc] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
@@ -51,24 +46,7 @@ export default function IdeasPage() {
           }));
           setIdeas(loadedIdeas);
         } else {
-          // Seed initial ideas if empty
-          for (const idea of initialIdeas) {
-            try {
-              await databases.createDocument(
-                DATABASE_ID,
-                IDEAS_COLLECTION_ID,
-                ID.unique(),
-                {
-                  title: idea.title,
-                  description: idea.description,
-                  author: idea.author,
-                  votes: idea.votes,
-                }
-              );
-            } catch (seedErr) {
-              console.warn("Seed idea error:", seedErr);
-            }
-          }
+          setIdeas([]);
         }
       } catch (err: unknown) {
         const appwriteErr = err as { code?: number };
