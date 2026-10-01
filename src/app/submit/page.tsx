@@ -34,8 +34,8 @@ export default function SubmitContent() {
       if (thumbnailFile) {
         const bucketId = process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID || "6abe7d3d0014f9fdd1d6";
         const uploadedFile = await storage.createFile(bucketId, ID.unique(), thumbnailFile);
-        const fileViewUrl = storage.getFileView(bucketId, uploadedFile.$id);
-        finalThumbnailUrl = typeof fileViewUrl === 'string' ? fileViewUrl : fileViewUrl.toString();
+        const fileViewUrl: any = storage.getFileView(bucketId, uploadedFile.$id);
+        finalThumbnailUrl = String(fileViewUrl);
       }
 
       await addItem({
