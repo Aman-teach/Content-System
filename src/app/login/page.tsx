@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { Lock, Mail, User, ShieldCheck, ArrowRight, Sparkles, UserPlus } from "lucide-react";
+import { Sparkles, ShieldCheck, User } from "lucide-react";
 import clsx from "clsx";
 
 export default function LoginPage() {
@@ -36,147 +36,161 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50/50 px-4 py-12 sm:px-6 lg:px-8 w-full">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 sm:p-10 rounded-3xl border border-gray-200/80 shadow-xl shadow-gray-100/50">
+    <div className="min-h-screen bg-[#F4F5FB] flex items-center justify-center p-4 sm:p-8 font-sans">
+      <div className="max-w-[1000px] w-full bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
         
-        {/* Header */}
-        <div className="text-center">
-          <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-200">
-            <Sparkles className="w-7 h-7 text-white" />
+        {/* Left Side: Vibrant Gradient Showcase */}
+        <div className="md:w-[45%] relative overflow-hidden bg-indigo-900 p-10 flex flex-col justify-between hidden md:flex">
+          {/* Abstract gradients */}
+          <div className="absolute top-[-20%] left-[-20%] w-[150%] h-[150%] bg-gradient-to-br from-indigo-500 via-purple-600 to-cyan-300 opacity-90 blur-3xl mix-blend-screen pointer-events-none" />
+          <div className="absolute bottom-0 right-0 w-[100%] h-[100%] bg-gradient-to-tl from-blue-600 to-transparent opacity-60 blur-2xl pointer-events-none" />
+          
+          <div className="relative z-10">
+            <Sparkles className="w-10 h-10 text-white opacity-90" />
           </div>
-          <h2 className="text-3xl font-black text-gray-900 tracking-tight">Content System</h2>
-          <p className="mt-2 text-sm text-gray-500 font-medium">
-            {isSignUp ? "Create your account to get started" : "Sign in to access your workspace"}
-          </p>
-        </div>
-
-        {/* Auth Mode Toggle (Sign In vs Sign Up) */}
-        <div className="flex border-b border-gray-200">
-          <button
-            type="button"
-            onClick={() => { setIsSignUp(false); setError(""); }}
-            className={clsx(
-              "flex-1 pb-3 text-sm font-bold border-b-2 transition-all",
-              !isSignUp ? "border-indigo-600 text-indigo-600" : "border-transparent text-gray-400 hover:text-gray-600"
-            )}
-          >
-            Sign In
-          </button>
-          <button
-            type="button"
-            onClick={() => { setIsSignUp(true); setError(""); }}
-            className={clsx(
-              "flex-1 pb-3 text-sm font-bold border-b-2 transition-all",
-              isSignUp ? "border-indigo-600 text-indigo-600" : "border-transparent text-gray-400 hover:text-gray-600"
-            )}
-          >
-            Create Account
-          </button>
-        </div>
-
-        {/* Role Selector Tabs */}
-        <div className="grid grid-cols-2 gap-2 p-1.5 bg-gray-100/80 rounded-2xl">
-          <button
-            type="button"
-            onClick={() => setSelectedRole("admin")}
-            className={clsx(
-              "py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2",
-              selectedRole === "admin" 
-                ? "bg-white text-gray-900 shadow-sm" 
-                : "text-gray-500 hover:text-gray-700"
-            )}
-          >
-            <ShieldCheck className="w-4 h-4 text-indigo-600" />
-            Admin
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedRole("client")}
-            className={clsx(
-              "py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2",
-              selectedRole === "client" 
-                ? "bg-white text-gray-900 shadow-sm" 
-                : "text-gray-500 hover:text-gray-700"
-            )}
-          >
-            <User className="w-4 h-4 text-emerald-600" />
-            Client
-          </button>
-        </div>
-
-        {/* Error Alert */}
-        {error && (
-          <div className="bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold p-3.5 rounded-xl leading-relaxed">
-            {error}
+          
+          <div className="relative z-10 mt-20">
+            <p className="text-indigo-100 font-medium text-sm mb-3 opacity-80">You can easily</p>
+            <h2 className="text-3xl lg:text-4xl font-bold text-white leading-[1.15] tracking-tight">
+              Get access to your personal hub for clarity and productivity
+            </h2>
           </div>
-        )}
+        </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {isSignUp && (
-            <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
-                Full Name
-              </label>
-              <div className="relative">
-                <User className="w-5 h-5 text-gray-400 absolute left-3.5 top-3.5" />
+        {/* Right Side: Form Content */}
+        <div className="flex-1 p-8 sm:p-12 lg:p-16 flex flex-col justify-center">
+          <div className="max-w-sm mx-auto w-full">
+            
+            {/* Mobile Header (Hidden on Desktop) */}
+            <div className="md:hidden mb-8 flex flex-col items-center">
+              <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-indigo-200">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">Content System</h2>
+            </div>
+
+            <div className="mb-8">
+              <div className="hidden md:flex items-center mb-6">
+                <Sparkles className="w-8 h-8 text-indigo-600" />
+              </div>
+              <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight mb-3">
+                {isSignUp ? "Create an account" : "Welcome back"}
+              </h1>
+              <p className="text-sm text-gray-500 leading-relaxed font-medium">
+                Access your content pipeline, review assets, and keep everything flowing in one place.
+              </p>
+            </div>
+
+            {error && (
+              <div className="bg-red-50 text-red-600 text-sm font-semibold p-3 mb-6 rounded-xl border border-red-100">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              
+              {/* Role Selection Tabs */}
+              <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100/70 rounded-xl mb-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole("admin")}
+                  className={clsx(
+                    "py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2",
+                    selectedRole === "admin" 
+                      ? "bg-white text-gray-900 shadow-sm border border-gray-200/50" 
+                      : "text-gray-500 hover:text-gray-700"
+                  )}
+                >
+                  <ShieldCheck className="w-4 h-4 text-indigo-600" />
+                  Admin
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole("client")}
+                  className={clsx(
+                    "py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2",
+                    selectedRole === "client" 
+                      ? "bg-white text-gray-900 shadow-sm border border-gray-200/50" 
+                      : "text-gray-500 hover:text-gray-700"
+                  )}
+                >
+                  <User className="w-4 h-4 text-emerald-600" />
+                  Client
+                </button>
+              </div>
+
+              {isSignUp && (
+                <div>
+                  <label className="block text-xs font-bold text-gray-900 mb-1.5">
+                    Your name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Enter your name"
+                    className="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm font-medium transition-all bg-gray-50/50 hover:bg-gray-50 focus:bg-white outline-none"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-bold text-gray-900 mb-1.5">
+                  Your email
+                </label>
                 <input
-                  type="text"
+                  type="email"
                   required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your name"
-                  className="block w-full pl-11 pr-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm font-medium transition-all"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@company.com"
+                  className="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm font-medium transition-all bg-gray-50/50 hover:bg-gray-50 focus:bg-white outline-none"
                 />
               </div>
-            </div>
-          )}
 
-          <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
-              Email Address
-            </label>
-            <div className="relative">
-              <Mail className="w-5 h-5 text-gray-400 absolute left-3.5 top-3.5" />
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@company.com"
-                className="block w-full pl-11 pr-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm font-medium transition-all"
-              />
+              <div>
+                <label className="block text-xs font-bold text-gray-900 mb-1.5">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  minLength={8}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm font-medium transition-all bg-gray-50/50 hover:bg-gray-50 focus:bg-white outline-none tracking-widest"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center py-3.5 px-4 border border-transparent rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all disabled:opacity-50 mt-4 active:scale-[0.98]"
+              >
+                {loading ? "Processing..." : (isSignUp ? "Create Account" : "Get Started")}
+              </button>
+            </form>
+
+            <div className="mt-8 text-center">
+              <p className="text-sm font-medium text-gray-500">
+                {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSignUp(!isSignUp);
+                    setError("");
+                  }}
+                  className="text-indigo-600 font-bold hover:text-indigo-700 transition-colors"
+                >
+                  {isSignUp ? "Log in" : "Sign up"}
+                </button>
+              </p>
             </div>
+
           </div>
-
-          <div>
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
-              Password
-            </label>
-            <div className="relative">
-              <Lock className="w-5 h-5 text-gray-400 absolute left-3.5 top-3.5" />
-              <input
-                type="password"
-                required
-                minLength={8}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="block w-full pl-11 pr-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm font-medium transition-all"
-              />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full flex items-center justify-center py-3.5 px-4 border border-transparent rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-md transition-all disabled:opacity-50 mt-6"
-          >
-            {loading ? "Processing..." : isSignUp ? `Create ${selectedRole === "admin" ? "Admin" : "Client"} Account` : `Sign In as ${selectedRole === "admin" ? "Admin" : "Client"}`}
-            {isSignUp ? <UserPlus className="w-4 h-4 ml-2" /> : <ArrowRight className="w-4 h-4 ml-2" />}
-          </button>
-        </form>
-
+        </div>
       </div>
     </div>
   );
