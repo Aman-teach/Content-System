@@ -39,19 +39,18 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[#F4F5FB] flex items-center justify-center p-4 sm:p-8 font-sans">
       <div className="max-w-[1000px] w-full bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
         
-        {/* Left Side: Vibrant Gradient Showcase */}
-        <div className="md:w-[45%] relative overflow-hidden bg-indigo-900 p-10 flex flex-col justify-between hidden md:flex">
-          {/* Abstract gradients */}
-          <div className="absolute top-[-20%] left-[-20%] w-[150%] h-[150%] bg-gradient-to-br from-indigo-500 via-purple-600 to-cyan-300 opacity-90 blur-3xl mix-blend-screen pointer-events-none" />
-          <div className="absolute bottom-0 right-0 w-[100%] h-[100%] bg-gradient-to-tl from-blue-600 to-transparent opacity-60 blur-2xl pointer-events-none" />
+        {/* Left Side: Image Showcase */}
+        <div className="md:w-[45%] relative overflow-hidden flex flex-col justify-between hidden md:flex bg-[url('/login-bg.jpg')] bg-cover bg-center">
+          {/* Subtle overlay to ensure text remains readable */}
+          <div className="absolute inset-0 bg-black/30 pointer-events-none" />
           
-          <div className="relative z-10">
-            <Sparkles className="w-10 h-10 text-white opacity-90" />
+          <div className="relative z-10 p-10">
+            <Sparkles className="w-10 h-10 text-white opacity-90 drop-shadow-md" />
           </div>
           
-          <div className="relative z-10 mt-20">
-            <p className="text-indigo-100 font-medium text-sm mb-3 opacity-80">You can easily</p>
-            <h2 className="text-3xl lg:text-4xl font-bold text-white leading-[1.15] tracking-tight">
+          <div className="relative z-10 p-10 mt-20">
+            <p className="text-white font-semibold text-sm mb-3 drop-shadow-md">You can easily</p>
+            <h2 className="text-3xl lg:text-4xl font-bold text-white leading-[1.15] tracking-tight drop-shadow-lg">
               Get access to your personal hub for clarity and productivity
             </h2>
           </div>
